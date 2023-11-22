@@ -7,3 +7,10 @@
 7. Virtual memory
 8. Preprocessing logic update
 9. input parameters
+
+----
+Fetch decode execute logic
+virtual memory logic
+Interrupt handling 
+CSR logic
+libcrt/ File descriptor based logic

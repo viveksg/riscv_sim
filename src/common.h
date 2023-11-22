@@ -8,6 +8,8 @@
 #include <stdbool.h>
 #include <assert.h>
 #include <vector>
+#include "riscv_isa.h"
+
 #define MAX_MEMSIZE 0xFFFFFFFF
 #define SIZE_WORD 4
 #define SIZE_HALFWORD 2

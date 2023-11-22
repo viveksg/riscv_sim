@@ -20,6 +20,7 @@ private:
   bool continue_simulation;
 
 public:
+  uint32_t get_opcode(uint64_t addr);
   void get_register(uint32_t reg_no);
   void set_register(uint32_t reg_no, uint64_t reg_val);
   void execute();
