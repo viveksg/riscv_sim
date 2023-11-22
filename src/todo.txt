@@ -1,0 +1,9 @@
+1. Elf parser
+2. CPU core class
+3. Instruction decoder
+4. CSR logic
+5. Simulation logic
+6. I/O logic
+7. Virtual memory
+8. Preprocessing logic update
+9. input parameters
