@@ -18,7 +18,11 @@
 #define KILOBYTES 1024
 #define MAX_REG 128
 #define MAX_CSRS 1024
+#define DECODE_SUCCESSFULL 2000
+#define DECODE_UNSUCCESSFULL 2001
+
 using namespace std;
+
 typedef struct
 {
     uint64_t start_addr;

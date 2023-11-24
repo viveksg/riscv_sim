@@ -15,7 +15,7 @@
                 "-t",
                 "1",
                 "-f",
-                "images/main.elf",
+                "elfs/basic.elf",
                 "-l",
                 "0",
             ],

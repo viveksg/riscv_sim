@@ -7,7 +7,12 @@ typedef struct
   int source_reg2;
   int dest_reg;
   uint32_t opcode;
-  uint64_t immediate;
+  int64_t immediate;
+  int32_t shamt;
+  uint32_t decode_status;
+  uint64_t instruction_val;
+  uint32_t instruction_type;
+  uint32_t immediate_type;
 } instruction_packet;
 
 class CPUCore
@@ -18,7 +23,6 @@ private:
   MMHandler *mHandler;
   uint64_t core_pc = 0;
   bool continue_simulation;
-
 public:
   uint32_t get_opcode(uint64_t addr);
   void get_register(uint32_t reg_no);
