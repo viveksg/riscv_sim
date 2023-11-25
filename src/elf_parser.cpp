@@ -47,6 +47,7 @@ ELFParser::ELFParser(string file_location, uint32_t *start_addr, MMHandler* mCnt
       {
          elf_data = elf_getdata(elf_scn, NULL);
          string region_name = elf_strptr(elf_pointer, section_heaher_index, elf_shdr->sh_name);
+         cout << region_name << endl;
          mCntrl->set_region(elf_shdr->sh_addr,elf_shdr->sh_addr+elf_shdr->sh_size,elf_shdr->sh_size,region_name);
       }
       section_index++;
@@ -54,11 +55,15 @@ ELFParser::ELFParser(string file_location, uint32_t *start_addr, MMHandler* mCnt
    mCntrl->setDefaultBaseAddr();
    section_index = 0;
    elf_pointer = elf_begin(elf_fd, ELF_C_READ, NULL);
+   if(elf_pointer == NULL)
+       cout << "elf_pointer: " <<elf_pointer << endl;
    while((elf_scn = elf_getscn(elf_pointer, section_index))!=NULL)
    {
+      elf_shdr = elf32_getshdr(elf_scn);
       // check if current section is text section
       if (elf_shdr->sh_type == SHT_PROGBITS)
       {  
+         elf_data = elf_getdata(elf_scn, NULL);
          uint64_t currr_addr = elf_shdr->sh_addr;
          for(int i = 0; i < elf_shdr->sh_size; i++)
          {

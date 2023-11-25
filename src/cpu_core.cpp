@@ -23,18 +23,24 @@ void CPUCore::execute()
     instruction_packet inst_packet;
     uint32_t opcode = get_opcode(core_pc);
     decode(opcode, &inst_packet);
-    cout << hex << core_pc << ": " << opcode << endl;
-    if (inst_packet.decode_status == DECODE_UNSUCCESSFULL)
+    if (inst_packet.decode_status == DECODE_UNSUCCESSFULL || opcode == 0)
     {
-        cout << "----"
-             << "decode failed" << endl;
-        continue_simulation = false;
+        //cout << "----"
+          //   << "decode failed" << endl;
+        //continue_simulation = false;
+
+#ifdef VER64
+    core_pc += INC_PC_64_BIT;
+#else
+    core_pc += INC_PC_32_BIT;
+#endif
         return;
     }
-    cout << hex << "-----" << inst_names[inst_packet.instruction_val] << " " << instr_types[inst_packet.instruction_type];
-    cout << inst_names[inst_packet.instruction_val] << " " << instr_types[inst_packet.instruction_type] << " ";
+
+    cout << hex << core_pc << ": " << opcode << endl;
+    cout << hex << "-----" << inst_names[inst_packet.instruction_val] << " " << instr_types[inst_packet.instruction_type - INSTR_TYPE_BASE];
     cout << inst_packet.source_reg1 << " " << inst_packet.source_reg2 << " " << inst_packet.dest_reg << " ";
-    cout << inst_packet.immediate << " " << endl;
+    cout <<" " <<inst_packet.immediate << " " << endl;
 
 #ifdef VER64
     core_pc += INC_PC_64_BIT;
@@ -42,7 +48,8 @@ void CPUCore::execute()
     core_pc += INC_PC_32_BIT;
 #endif
 }
-void CPUCore::decode(uint64_t opcode, instruction_packet *instr_packet)
+
+void CPUCore::decode(uint32_t opcode, instruction_packet *instr_packet)
 {
     int src_reg1 = 0, src_reg2 = 0, dst_reg = 0;
     src_reg1 = (opcode & OPCODE_RS1_MASK) >> OPCODE_RS1_SHIFT; // bits [15-19]
@@ -62,7 +69,7 @@ void CPUCore::decode(uint64_t opcode, instruction_packet *instr_packet)
     for (int i = 0; i < MAX_INSTR; i++)
     {
         instr_def curr_def = instr_defs[i];
-        if (opcode & curr_def.instruction_mask == curr_def.instruction_match)
+        if ((opcode & curr_def.instruction_mask) == curr_def.instruction_match)
         {
             instr_packet->decode_status = DECODE_SUCCESSFULL;
             instr_packet->instruction_type = curr_def.instruction_type;

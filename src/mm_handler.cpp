@@ -148,9 +148,11 @@ void MMHandler::print_all_regions()
         for(uint32_t i = mregion->start_addr;i < mregion->end_addr; i+=4)
            {
              read_bytes(i,(uint8_t *) &data,SIZE_WORD);
-             cout << hex << i <<": "<<data << endl;
+             if(data > 0)
+                 cout << hex << i <<": "<<data << endl;
            }
     }
+    cout << "print complete" <<endl;
 }
 MMHandler::MMHandler(uint32_t size)
 {

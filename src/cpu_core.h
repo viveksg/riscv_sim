@@ -28,7 +28,7 @@ public:
   void get_register(uint32_t reg_no);
   void set_register(uint32_t reg_no, uint64_t reg_val);
   void execute();
-  void decode(uint64_t opcode, instruction_packet *instr_packet);
+  void decode(uint32_t opcode, instruction_packet *instr_packet);
   void start_simulation(uint64_t start_addr);
   CPUCore(MMHandler *mhndler);
 };
