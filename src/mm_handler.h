@@ -15,12 +15,15 @@ class MMHandler{
         bool store32(uint64_t addr, uint32_t data, uint32_t width);  
         uint64_t load64(uint64_t addr, uint64_t width ,bool isSignedload);
         bool store64(uint64_t addr, uint64_t data, uint32_t width); 
-        void set_region(uint64_t start_addr, uint64_t end_addr,uint64_t rsize, string name);
+        void set_region(uint64_t start_addr, uint64_t end_addr,uint64_t r111size, string name);
         void print_all_regions();
         MMHandler(uint32_t size);
         ~MMHandler();
         void setDefaultBaseAddr();
         void setBaseAddr(uint64_t addr);
+        //mmu_methods
+        bool MMHandler::mmu_resolve(uint32_t addr, uint32_t *ret_addr);
+        uint8_t *get_phy_pointer(uint32_t addr);
 
 };
 

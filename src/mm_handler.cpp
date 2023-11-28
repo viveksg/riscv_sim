@@ -1,7 +1,7 @@
 #include "mm_handler.h"
 
 bool MMHandler::write_byte(uint64_t addr, uint8_t dbyte)
-{   
+{
     addr = addr - base_addr;
     if (addr >= MAX_MEMSIZE)
         return false;
@@ -134,25 +134,25 @@ bool MMHandler::store64(uint64_t addr, uint64_t data, uint32_t width)
     return true;
 }
 
-void MMHandler::set_region(uint64_t start_addr, uint64_t end_addr,uint64_t rsize, string name)
+void MMHandler::set_region(uint64_t start_addr, uint64_t end_addr, uint64_t rsize, string name)
 {
-    mm_regions.push_back({start_addr, end_addr,rsize, name});
+    mm_regions.push_back({start_addr, end_addr, rsize, name});
 }
 
 void MMHandler::print_all_regions()
 {
-    for(auto mregion =mm_regions.begin(); mregion != mm_regions.end();mregion++)
+    for (auto mregion = mm_regions.begin(); mregion != mm_regions.end(); mregion++)
     {
-        cout<<mregion->name<< "start: " << mregion->start_addr <<", end: "<< mregion->end_addr <<", size: "<<mregion->region_size/KILOBYTES<<endl;
+        cout << mregion->name << "start: " << mregion->start_addr << ", end: " << mregion->end_addr << ", size: " << mregion->region_size / KILOBYTES << endl;
         uint32_t data = 0;
-        for(uint32_t i = mregion->start_addr;i < mregion->end_addr; i+=4)
-           {
-             read_bytes(i,(uint8_t *) &data,SIZE_WORD);
-             if(data > 0)
-                 cout << hex << i <<": "<<data << endl;
-           }
+        for (uint32_t i = mregion->start_addr; i < mregion->end_addr; i += 4)
+        {
+            read_bytes(i, (uint8_t *)&data, SIZE_WORD);
+            if (data > 0)
+                cout << hex << i << ": " << data << endl;
+        }
     }
-    cout << "print complete" <<endl;
+    cout << "print complete" << endl;
 }
 MMHandler::MMHandler(uint32_t size)
 {
@@ -165,17 +165,31 @@ MMHandler::~MMHandler()
 }
 
 void MMHandler::setDefaultBaseAddr()
-{   
-    for(auto mreg = mm_regions.begin(); mreg != mm_regions.end();mreg++)
+{
+    for (auto mreg = mm_regions.begin(); mreg != mm_regions.end(); mreg++)
     {
-        if(mreg==mm_regions.begin())
-           base_addr = mreg->start_addr;
+        if (mreg == mm_regions.begin())
+            base_addr = mreg->start_addr;
         else
-           base_addr = base_addr > mreg->start_addr? mreg->start_addr: base_addr;   
+            base_addr = base_addr > mreg->start_addr ? mreg->start_addr : base_addr;
     }
-
 }
 void MMHandler::setBaseAddr(uint64_t addr)
 {
     base_addr = addr;
+}
+bool MMHandler::mmu_resolve(uint32_t addr, uint32_t *ret_addr)
+{
+    // todo add virtual memory later;
+#ifndef MMU_ENABLED
+    *ret_addr = addr;
+    return false;
+#endif
+    return false;
+}
+
+uint8_t *MMHandler::get_phy_pointer(uint32_t addr)
+{
+    addr = addr - base_addr;
+    return (uint8_t *)&memory_buff[addr];
 }
