@@ -626,7 +626,11 @@ void CPUCore::execute()
         }
         else if (inst_packet.instruction_val == ENUM_INST_WFI)
         {
+#ifdef __PRINT_INSTR_
+            cout << hex << core_pc << ": "<<wfi
+            #endif        
         }
+        /* todo implement atomic extension later
         else if (inst_packet.instruction_val == ENUM_INST_AMOLR_W)
         {
         }
@@ -657,6 +661,7 @@ void CPUCore::execute()
         else if (inst_packet.instruction_val == ENUM_INST_AMOMINU_W)
         {
         }
+        */
         else
         {
             cout << "Unkown opcode: " << opcode << endl;
