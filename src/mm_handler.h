@@ -1,6 +1,6 @@
 #ifndef __MM__HANDLER__
 #define __MM__HANDLER__
-#include "common.h"
+#include "mmu.h"
 class MMHandler{
     private:
         vector<memory_region> mm_regions;

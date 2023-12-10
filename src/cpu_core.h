@@ -60,7 +60,7 @@ public:
   void execute();
   void decode(uint32_t opcode, instruction_packet *instr_packet);
   void start_simulation(uint32_t start_addr);
-  void handle_exception(uint32_t cause, uint32_t pc_val);
+  void handle_exception(uint32_t cause, uint32_t pc_val , uint32_t badaddr /*= 0*/);
   uint32_t csr_access(uint32_t addr, uint32_t data, bool set, uint32_t clr, uint32_t *pc);
   CPUCore(MMHandler *mhndler);
 };

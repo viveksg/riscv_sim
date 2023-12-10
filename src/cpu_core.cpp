@@ -20,6 +20,66 @@ void CPUCore::set_register(uint32_t reg_no, uint32_t reg_val)
 {
     registers[reg_no] = reg_val;
 }
+
+void CPUCore::handle_exception(uint32_t cause, uint32_t pc_val , uint32_t badaddr /*= 0*/)
+{
+    uint32_t delegate_type = 0;
+    uint32_t bit = 0;
+    if(cause >= MCAUSE_INTERRUPT)
+    {
+        delegate_type = m_csr_mideleg;
+        bit = (1 << (cause - MCAUSE_INTERRUPT)); 
+    }
+    else
+    {
+        delegate_type = m_csr_medeleg;
+        bit = (1 << cause);
+    }
+    
+    if(m_csr_mpriv < PRIV_SUPER && (delegate_type & bit))
+    {
+        //current mode is supervisor mode 
+        uint32_t current_status = m_csr_msr;
+
+        //save and disable the interrupt
+        current_status &= (~SR_SPIE);
+        current_status |= (current_status & SR_SIE)?SR_SPIE:0;
+        current_status &= (~SR_SIE);
+
+        //save current privelege level
+
+        current_status &= (~SR_SPP);
+        current_status |= (m_csr_mpriv == PRIV_SUPER)?SR_SPP:0;
+
+        m_csr_mpriv = PRIV_SUPER;
+        m_csr_msr = current_status;
+        m_csr_sepc = core_pc;
+        m_csr_mcause = cause;
+        m_csr_stval = badaddr;
+        core_pc = m_csr_sevec;
+    }
+    else
+    {   //machine mode
+        uint32_t current_status = m_csr_msr;
+        
+        //save and disable interrupt
+        current_status &= (~SR_MPIE);
+        current_status |= (current_status & SR_MPIE)?SR_MPIE:0;
+        current_status &= (~SR_MIE);
+
+        current_status &= (~SR_MPP);
+        current_status |= (m_csr_mpriv << SR_MPP_SHIFT);
+
+        m_csr_mpriv = PRIV_MACHINE;
+        m_csr_msr = current_status;
+        m_csr_mepc = core_pc;
+        m_csr_mcause = cause;
+        m_csr_stval = badaddr;
+        core_pc = m_csr_mevec;
+    }
+
+}
+
 void CPUCore::execute()
 {
     instruction_packet inst_packet;
@@ -455,7 +515,7 @@ void CPUCore::execute()
             cout << hex << core_pc << ": "
                  << "ecall " << endl;
 #endif
-            handle_exception(MCAUSE_ECALL_U + m_csr_mpriv, core_pc);
+            handle_exception(MCAUSE_ECALL_U + m_csr_mpriv, core_pc,0);
             activate_exception = true;
         }
         else if (inst_packet.instruction_val == ENUM_INST_EBREAK)
@@ -464,7 +524,7 @@ void CPUCore::execute()
             cout << hex << core_pc << ": "
                  << "ebreak" << endl;
 #endif
-            handle_exception(MCAUSE_BREAKPOINT, core_pc);
+            handle_exception(MCAUSE_BREAKPOINT, core_pc,0);
             activate_exception = true;
         }
         else if (inst_packet.instruction_val == ENUM_INST_MRET)
