@@ -76,6 +76,7 @@ typedef struct
 {
     uint32_t level_offsets[MAX_LEVELS];
     uint32_t page_offset;
+    uint32_t num_levels;
 } virtual_addr;
 
 typedef struct
@@ -91,6 +92,65 @@ typedef struct
     bool is_dirty;
 } pte_entry;
 
+typedef struct{
+    bool exception_occurred;
+    uint32_t pc ;
+    uint64_t pc64;
+    uint64_t addr;
+    uint32_t addr32;
+    uint32_t cause;
+}page_fault;
+
+typedef struct{
+    uint32_t phy_addr;
+    uint64_t phy_addr64;
+}physical_address;
+
 #define set_mask(a, b) (((1 << (b - a +1)) - 1) << a)
 #define extract_bits(b, c, d) ((b & set_mask(c, d)) >> d)
+
+#define SV32_LEVELS 2
+#define SV32_VA_LEVEL_O_START 31
+#define SV32_VA_LEVEL_0_END 22
+#define SV32_VA_LEVEL_1_START 12
+#define SV32_VA_LEVEL_1_END 21
+#define SV32_VA_PAGE_OFFSET_START 0
+#define SV32_VA_PAGE_OFFSET_END 11
+
+#define SV48_LEVELS 3
+#define SV48_VA_LEVEL_O_START 30
+#define SV48_VA_LEVEL_0_END 38
+#define SV48_VA_LEVEL_1_START 21
+#define SV48_VA_LEVEL_1_END 29
+#define SV48_VA_LEVEL_2_START 12
+#define SV48_VA_LEVEL_2_END 20
+#define SV48_VA_PAGE_OFFSET_START 0
+#define SV48_VA_PAFE_OFFSET_END 11
+
+#define SV56_LEVELS 4
+#define SV56_VA_LEVEL_O_START 39
+#define SV56_VA_LEVEL_0_END 47
+#define SV56_VA_LEVEL_1_START 30
+#define SV56_VA_LEVEL_1_END 38
+#define SV56_VA_LEVEL_2_START 21
+#define SV56_VA_LEVEL_2_END 29
+#define SV56_VA_LEVEL_3_START 12
+#define SV56_VA_LEVEL_3_END 20
+#define SV56_VA_PAGE_OFFSET_START 0
+#define SV56_VA_PAFE_OFFSET_END 11
+
+#define PMA_BIT_PAGE_PRESENT (1 << 0)
+#define PMA_BIT_PAGE_READ  (1 << 1)
+#define PMA_BIT_PAGE_WRITE (1 << 2)
+#define PMA_BIT_PAGE_EXEC  (1 << 3)
+#define PMA_BIT_PAGE_USER  (1 << 4)
+#define PMA_BIT_PAGE_GLOBAL (1 << 5)
+#define PMA_BIT_PAGE_ACCESSED (1 << 6)
+#define PMA_BIT_PAGE_DIRTY (1 << 7)
+#define PMA_BIT_SHIFT 10
+#define PG_OFFSET_SHIFT 12
+
+#define PTE_SIZE_MMU32 4
+#define PTR_SIZE_MMU64 8
+
 #endif
